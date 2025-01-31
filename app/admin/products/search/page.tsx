@@ -3,6 +3,10 @@ import ProductTable from "@/components/products/ProductTable";
 import Heading from "@/components/ui/Heading";
 import { prisma } from "@/src/lib/prisma";
 
+type SearchParams = {
+    search: string;
+}
+
 async function searchProducts(searchTerm: string) {
     const products = await prisma.product.findMany({
         where: {
@@ -19,9 +23,9 @@ async function searchProducts(searchTerm: string) {
     return products
 }
 
-export default async function SearchPage({ searchParams }: { searchParams: { search: string } }) {
-
-    const products = await searchProducts(searchParams.search)
+export default async function SearchPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+    const search = (await searchParams).search
+    const products = await searchProducts(search)
 
     return (
         <>
